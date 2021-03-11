@@ -165,19 +165,19 @@ function concatNumbers(primeNumber, inputNumber){
 }
 
 /* Cette fonction va lire le tableau à partir du dernier élément jusqu'à l'élément 0. Il va servir 
-principalement à repérer les différents opérateurs ou retourner le résultat final. */
+principalement à repérer les opérateurs prioritaires (/ ou *) et ensuite va rechercher les opérateur simples (+ ou -) */
 function readArray(inputArray){
-    let leftNumber = 0;
-    let rightNumber = 0;
-    let operator ='';
-    let result = 0;
+
     let finalResult = 0;
 
-    for(let i = inputArray.length-1; i>=0; i--){
-        if(inputArray[i] === '/' || inputArray[i] === '*'){
-            threeElementsForOne(inputArray, i);
+    for(let a = inputArray.length-1; a>=0; a--){
+        if(inputArray[a] === '/' || inputArray[a] === '*'){
+            threeElementsForOne(inputArray, a);
         }
-        else if(inputArray[i] === '+'){
+    }
+
+    for(let i = inputArray.length-1; i>=0; i--){
+        if(inputArray[i] === '+'){
             threeElementsForOne(inputArray, i);
         }
         else if(inputArray[i] === '-'){
