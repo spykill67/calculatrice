@@ -1,4 +1,4 @@
-/* récupération des nombres à partir du fichier html */
+/* récupération des nombres à partir du DOM */
 const finalAnswer = document.getElementById('final_answer');
 
 const nombreZero = document.getElementById('zero');
@@ -22,6 +22,7 @@ let showConsole = '';
 let arrayNumberMemory = [];
 let numberInput = 0;
 
+/* écoute des évenements lors d'un click pour les chiffres de 0 à 9 */
 nombreZero.addEventListener('click', function(){
     showConsole = finalAnswer.innerHTML = showConsole + "0";
     numberInput = concatNumbers(numberInput, 0);
@@ -83,6 +84,7 @@ nombreNeuf.addEventListener('click', function(){
 
 });
 
+/* écoute des évenements lors d'un click pour les opérateurs /, *, +, -, et = */
 positif.addEventListener('click', function(){
     binaryTest = verifAntiSecondSigne(showConsole);
     if(binaryTest === 1){
@@ -133,7 +135,7 @@ equal.addEventListener('click', function(){
 
 /* Cette fonction empêche l'utilisateur d'entrer plusieurs signes 
    opérateurs à la suite. Si l'utilisateur clique sur le signe 
-   égale, renvoie 2 pour afficher la réponse. */
+   égale, renvoie 1 pour afficher la réponse. */
 
 function verifAntiSecondSigne (string){
     let lastChar = string.length - 1 ;
@@ -150,7 +152,7 @@ function verifAntiSecondSigne (string){
     }
 };
 
-/* Cette fonction va concaténer une unité à un chiffre */
+/* Cette fonction va concaténer un chiffre à un nombre =>123 '+' 4 = 1234 */
 function concatNumbers(primeNumber, inputNumber){
 
     if(primeNumber === 0){
@@ -163,7 +165,7 @@ function concatNumbers(primeNumber, inputNumber){
 }
 
 /* Cette fonction va lire le tableau à partir du dernier élément jusqu'à l'élément 0. Il va servir 
-principalement à repérer les différents opérateurs. */
+principalement à repérer les différents opérateurs ou retourner le résultat final. */
 function readArray(inputArray){
     let leftNumber = 0;
     let rightNumber = 0;
@@ -173,34 +175,13 @@ function readArray(inputArray){
 
     for(let i = inputArray.length-1; i>=0; i--){
         if(inputArray[i] === '/' || inputArray[i] === '*'){
-            leftNumber = inputArray[i-1];
-            operator = inputArray[i];
-            rightNumber = inputArray[i+1];
-            result = calculTimeOrSplit(leftNumber, rightNumber, operator);
-            inputArray.splice(i, 1, result);
-            inputArray.splice(i+1, 1);
-            inputArray.splice(i-1, 1);
-            readArray(inputArray);
+            threeElementsForOne(inputArray, i);
         }
         else if(inputArray[i] === '+'){
-            leftNumber = inputArray[i-1];
-            operator = inputArray[i];
-            rightNumber = inputArray[i+1];
-            result = calculTimeOrSplit(leftNumber, rightNumber, operator);
-            inputArray.splice(i, 1, result);
-            inputArray.splice(i+1, 1);
-            inputArray.splice(i-1, 1);
-            readArray(inputArray);
+            threeElementsForOne(inputArray, i);
         }
         else if(inputArray[i] === '-'){
-            leftNumber = inputArray[i-1];
-            operator = inputArray[i];
-            rightNumber = inputArray[i+1];
-            result = calculTimeOrSplit(leftNumber, rightNumber, operator);
-            inputArray.splice(i, 1, result);
-            inputArray.splice(i+1, 1);
-            inputArray.splice(i-1, 1);
-            readArray(inputArray);
+            threeElementsForOne(inputArray, i);
         }
         else if (inputArray.length === 1){
             finalResult = inputArray[0];
@@ -210,6 +191,8 @@ function readArray(inputArray){
     }
 }
 
+/* Cette fonction va récupérer les 2 chiffres à calculer ainsi que l'opérateur. Elle va retourner 
+   le résultat */
 function calculTimeOrSplit(leftNumberOfArray, rightNumberOfArray, operator){
     let split = '/';
     let time = '*';
@@ -230,4 +213,28 @@ function calculTimeOrSplit(leftNumberOfArray, rightNumberOfArray, operator){
     else if(operator === plus){
         return leftNumber + rightNumber;
     }
+}
+
+/* Cette fonction va récupérer le signe opérateur ainsi que les nombres à ses bornes dans le tableau.
+   elle va ensuite calculer les 2 chiffres selon le signe opérateur. Après le calcul effectué, le résultat 
+   va remplacer le signe opérateur dans le tableau et les chiffres à calculer seront supprimés
+   exemple: ['5' '*' '5'] => ['5' '25' '5'] => [ del '25' del] => ['25']. 
+   Comme la taille du tableau a changé, pour éviter les erreurs avec l'indexation, une fonction récursive 
+   sera nécessaire afin de le mettre à jour et recommencer la boucle for avec une nouvelle taille du tableau
+   jusqu'à ce qu'il reste qu'un seul élément.
+    */
+function threeElementsForOne(array, index){
+    let leftNumber = 0;
+    let rightNumber = 0;
+    let operator ='';
+    let result = 0;
+
+    leftNumber = array[index-1];
+    operator = array[index];
+    rightNumber = array[index+1];
+    result = calculTimeOrSplit(leftNumber, rightNumber, operator);
+    array.splice(index, 1, result);
+    array.splice(index+1, 1);
+    array.splice(index-1, 1);
+    readArray(array);
 }
