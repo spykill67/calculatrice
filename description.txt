@@ -1,0 +1,3 @@
+calculatrice en javascript.
+
+Le code permet divers calcul mais ne peut tous les  gérer avec le signe opérateur"/".
